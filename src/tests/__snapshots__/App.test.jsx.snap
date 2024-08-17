@@ -1,0 +1,79 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`App component > renders correctly and matches the snapshot 1`] = `
+<DocumentFragment>
+  <div
+    class="_navbar_61351a"
+  >
+    <p>
+      Buy Something
+    </p>
+    <ul
+      class="_links_61351a"
+    >
+      <a
+        href="/homepage"
+      >
+        HomePage
+      </a>
+      <br />
+      <a
+        href="/homepage"
+      >
+        Shop
+      </a>
+      <br />
+      <span>
+        %
+      </span>
+      <a
+        href="/homepage"
+      >
+        0
+      </a>
+    </ul>
+  </div>
+  <div
+    class="_mainContent_61351a"
+  />
+</DocumentFragment>
+`;
+
+exports[`App component navigation > renders the navbar correctly 1`] = `
+<DocumentFragment>
+  <div
+    class="_navbar_61351a"
+  >
+    <p>
+      Buy Something
+    </p>
+    <ul
+      class="_links_61351a"
+    >
+      <a
+        href="/homepage"
+      >
+        HomePage
+      </a>
+      <br />
+      <a
+        href="/homepage"
+      >
+        Shop
+      </a>
+      <br />
+      <span>
+        %
+      </span>
+      <a
+        href="/homepage"
+      >
+        0
+      </a>
+    </ul>
+  </div>
+  <div
+    class="_mainContent_61351a"
+  />
+</DocumentFragment>
+`;
