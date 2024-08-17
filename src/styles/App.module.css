@@ -1,0 +1,16 @@
+.navbar {
+  background-color: rgb(187, 251, 239);
+  transform: translate(30%, 50%);
+  width: 60%;
+  border-radius: 25px;
+  padding: 2rem;
+}
+
+.mainContent {
+  background-color: rgb(240, 255, 252);
+  transform: translate(10%, 50%);
+  width: 80%;
+  border-radius: 25px;
+  padding: 2rem;
+  text-align: center;
+}
