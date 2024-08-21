@@ -5,7 +5,7 @@ const StyledH1 = styled.a`
   color: red;
 `;
 
-export function HomePage() {
+export default function HomePage() {
   return (
     <>
       <StyledH1>Welcome</StyledH1>
