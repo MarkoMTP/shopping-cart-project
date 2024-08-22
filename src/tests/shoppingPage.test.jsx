@@ -1,58 +1,75 @@
-import { MemoryRouter, Route, Routes, useLoaderData } from 'react-router-dom';
-import { beforeEach, describe, expect, it } from 'vitest';
-import App from '../components/App';
-import { fireEvent, render, screen } from '@testing-library/react';
-import ShoppingPage from '../components/ShoppingPage';
-import { vi } from 'vitest';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import { describe, it, expect, vi } from 'vitest';
+import { MemoryRouter } from 'react-router-dom';
+import ShoppingPage from '../components/ShoppingPage'; // Adjust the import path based on your file structure
 
-beforeEach(() => {
-  vi.mock('react-router-dom', async () => {
-    const actual = await vi.importActual('react-router-dom');
-    return {
-      ...actual,
-      useLoaderData: () => ({
-        items: [
-          { id: 1, title: 'Item 1', image: 'http://example.com/image1.jpg' },
-          { id: 2, title: 'Item 2', image: 'http://example.com/image2.jpg' },
-          { id: 3, title: 'Item 3', image: 'http://example.com/image3.jpg' },
-        ],
-      }),
-    };
+describe('ShoppingPage', () => {
+  const mockHandleAddToCart = vi.fn();
+
+  const mockItems = [
+    {
+      id: '1',
+      title: 'Item 1',
+      image: 'https://via.placeholder.com/150',
+      price: 10,
+    },
+    {
+      id: '2',
+      title: 'Item 2',
+      image: 'https://via.placeholder.com/150',
+      price: 20,
+    },
+  ];
+
+  const renderWithRouter = (ui, { route = '/' } = {}) => {
+    return render(<MemoryRouter initialEntries={[route]}>{ui}</MemoryRouter>);
+  };
+
+  it('renders loading state', () => {
+    renderWithRouter(
+      <ShoppingPage handleAddToCart={mockHandleAddToCart} items={[]} />
+    );
+    expect(screen.getByText(/Fetching items.../)).toBeInTheDocument();
   });
-});
 
-describe('Shopping page with all items', () => {
-  it('test the navigation to the shopping page correctly', () => {
-    render(
-      <MemoryRouter initialEntries={['/']}>
-        <Routes>
-          <Route path="/" element={<App />}>
-            <Route path="/shoppingpage" element={<ShoppingPage />} />
-          </Route>
-        </Routes>
-      </MemoryRouter>
+  it('renders items after loading', async () => {
+    renderWithRouter(
+      <ShoppingPage handleAddToCart={mockHandleAddToCart} items={mockItems} />
     );
 
-    expect(screen.queryByText('Item 1')).toBeNull();
+    // Wait for the loading to finish
+    await waitFor(() => {
+      expect(screen.queryByText(/Fetching items.../)).not.toBeInTheDocument();
+    });
 
-    fireEvent.click(screen.getByText('Shop'));
-
+    // Check if items are rendered
     expect(screen.getByText('Item 1')).toBeInTheDocument();
-  });
-
-  it('test if the add to cart button works', () => {
-    const mockAddToCart = vi.fn();
-
-    render(
-      <MemoryRouter>
-        <ShoppingPage onClick={mockAddToCart} />
-      </MemoryRouter>
+    expect(screen.getByText('$10')).toBeInTheDocument();
+    expect(screen.getByAltText('Item 1')).toHaveAttribute(
+      'src',
+      'https://via.placeholder.com/150'
     );
 
-    const buttons = screen.getAllByText('Add to cart');
-    fireEvent.click(buttons[0]); // Click the first "Add to cart" button
+    expect(screen.getByText('Item 2')).toBeInTheDocument();
+    expect(screen.getByText('$20')).toBeInTheDocument();
+    expect(screen.getByAltText('Item 2')).toHaveAttribute(
+      'src',
+      'https://via.placeholder.com/150'
+    );
+  });
+
+  it('calls handleAddToCart when button is clicked', async () => {
+    renderWithRouter(
+      <ShoppingPage handleAddToCart={mockHandleAddToCart} items={mockItems} />
+    );
+
+    await waitFor(() => {
+      expect(screen.queryByText(/Fetching items.../)).not.toBeInTheDocument();
+    });
+
+    const buttons = screen.getAllByText('Add to Cart');
     fireEvent.click(buttons[0]);
-    // Expect the mock function to have been called once
-    expect(mockAddToCart).toHaveBeenCalledTimes(2);
+    fireEvent.click(buttons[0]);
+    expect(mockHandleAddToCart).toHaveBeenCalledTimes(2);
   });
 });

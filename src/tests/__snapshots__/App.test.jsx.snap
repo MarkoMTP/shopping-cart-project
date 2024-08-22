@@ -27,14 +27,14 @@ exports[`App component navigation > renders the navbar correctly 1`] = `
         %
       </span>
       <a
-        href="/homepage"
+        href="/cart"
       >
         0
       </a>
     </ul>
   </div>
   <div
-    class="_shoppingPage_61351a"
+    class="_homePageClass_61351a"
   />
 </DocumentFragment>
 `;
