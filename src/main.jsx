@@ -3,7 +3,9 @@ import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import HomePage from './components/Homepage.jsx';
 import App from './components/App.jsx';
-import ShoppingPage, { shoppingLoader } from './components/ShoppingPage.jsx';
+import ShoppingPage from './components/ShoppingPage.jsx';
+import CartPage from './components/shoppingCart.jsx';
+import { shoppingLoader } from './components/ShoppingPage.jsx';
 
 const router = createBrowserRouter([
   {
@@ -14,7 +16,11 @@ const router = createBrowserRouter([
       {
         path: '/shoppingpage',
         element: <ShoppingPage />,
-        loader: shoppingLoader,
+        loader: shoppingLoader, // Attach the loader to this route
+      },
+      {
+        path: '/cart',
+        element: <CartPage />,
       },
     ],
   },

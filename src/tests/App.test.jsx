@@ -59,5 +59,6 @@ describe('App component navigation', () => {
     expect(screen.getByText('Welcome')).toBeInTheDocument();
     expect(screen.getByText('This is the HOME PAGE(fake)')).toBeInTheDocument();
     expect(screen.getByText('Its just for practice')).toBeInTheDocument();
-  });
+  }),
+    
 });

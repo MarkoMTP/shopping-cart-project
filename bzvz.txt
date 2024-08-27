@@ -1,0 +1,32 @@
+Naci shopping page, koristeci loader fethcat itemse i zatim use loader = data i onda s tim datima napravit ,
+data.map => item i onda svaki item prezentirat tako na stranici, // napravljeno
+
+moram preuredit shopping page//done
+
+napravit onclick botun i testirat ga//done
+
+i svaki click da se add u cart i da se to zbraja tako, znaci on click cemo dat nizbrdo child elementu funckiju iz parenta koja daje add to cart//done
+
+novi 
+
+napravit da se styling class promjeni u isto vrijeme kad i component , sad trenutno bjezi malo prije styling // done
+
+prikazat iteme dodane u cart na shopping cart page
+
+
+
+
+
+/// test za shop cart
+
+triba testirat da kad pritisnem add to cart botun i da kad onda odemo na onu drugu stranicu shop cart da su tamo prikazani ti itemi// done
+
+
+sad treba prvo napravit test za shopping cart page:
+- treba testirat prvo kad par itema stavimo u add to cart da se gore promjeni broj, zatim simulirat prelazzak na stranicu CART i tamo da su prikazani odredeni itemi. 
+    renderat SHoppign page, zatim nac onu 0 na ekranu i potvrdit da je tu , zatim simulirat par add to cart clickova i provjerit kolko puta je zvano, 
+    zatim simulirat prelazak na My cart i onda provjerit jesu li klikani itemsi tamo
+
+
+
+    SHVATIT KAKO KOJI KURAC TESTIRAT
