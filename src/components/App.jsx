@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import style from '../styles/App.module.css';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import HomePage from './Homepage';
 import ShoppingPage from './ShoppingPage';
 import CartPage from './shoppingCart';
@@ -10,8 +10,29 @@ export default function App() {
   const [activeLink, setActiveLink] = useState('');
   const [cartItems, setCartItems] = useState([]);
 
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true); // Loading state
+  const [error, setError] = useState(null); // Error state
+
+  useEffect(() => {
+    fetch('https://fakestoreapi.com/products?limit=5', { mode: 'cors' })
+      .then((response) => {
+        if (response.status >= 400) {
+          throw new Error('Server error');
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setItems(data);
+        setLoading(false); // Set loading to false when data is fetched
+      })
+      .catch((err) => {
+        setError(err.message);
+        setLoading(false); // Set loading to false if there's an error
+      });
+  }, []);
+
   function handleLinkClick(linkName) {
-    // Add a delay before setting the active link
     setActiveLink(linkName);
   }
 
@@ -22,11 +43,16 @@ export default function App() {
       { title, image, price, id },
     ]);
   }
+
   let content;
-  if (activeLink === 'homepage') {
+  if (loading) {
+    content = <div>Loading items...</div>; // Show loading message
+  } else if (error) {
+    content = <div>Error: {error}</div>; // Show error message
+  } else if (activeLink === 'homepage') {
     content = <HomePage />;
   } else if (activeLink === 'shoppingpage') {
-    content = <ShoppingPage handleAddToCart={handleAddToCart} />;
+    content = <ShoppingPage handleAddToCart={handleAddToCart} items={items} />;
   } else if (activeLink === 'cart') {
     content = <CartPage cartItems={cartItems} />;
   }
@@ -35,7 +61,6 @@ export default function App() {
     <>
       <div className={style.navbar}>
         <p>Buy Something</p>
-
         <ul className={style.links}>
           <Link to="homepage" onClick={() => handleLinkClick('homepage')}>
             HomePage
