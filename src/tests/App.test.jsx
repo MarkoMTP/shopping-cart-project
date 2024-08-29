@@ -5,6 +5,7 @@ import App from '../components/App';
 import HomePage from '../components/Homepage'; // Ensure correct import path
 import ShoppingPage from '../components/ShoppingPage';
 import userEvent from '@testing-library/user-event';
+import CartPage from '../components/shoppingCart';
 
 describe('App component navigation', () => {
   const user = userEvent.setup();
@@ -51,10 +52,58 @@ describe('App component navigation', () => {
     // Verify initial content
     expect(screen.queryByText('Welcome')).toBeNull(); // Ensure 'Welcome' is not on the initial page
 
-    // Click the 'HomePage' link
     await user.click(screen.getByText('Shop'));
 
-    // Verify that the content from HomePage is displayed
     expect(await screen.findByText('Item 2')).toBeInTheDocument();
+  });
+
+  it('navigates to homepage and displays content', async () => {
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <Routes>
+          <Route path="/" element={<App />}>
+            <Route
+              path="shoppingpage"
+              element={
+                <ShoppingPage handleAddToCart={mockFn} items={mockItems} />
+              }
+            />
+            <Route path="homepage" element={<HomePage />}></Route>
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    );
+
+    // Verify initial content
+    expect(screen.queryByText('Welcome')).toBeNull(); // Ensure 'Welcome' is not on the initial page
+
+    await user.click(screen.getByText('HomePage'));
+
+    expect(await screen.findByText('Welcome')).toBeInTheDocument();
+  });
+
+  it('navigates to Cart Page and displays content', async () => {
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <Routes>
+          <Route path="/" element={<App />}>
+            <Route
+              path="shoppingpage"
+              element={
+                <ShoppingPage handleAddToCart={mockFn} items={mockItems} />
+              }
+            />
+            <Route path="cart" element={<CartPage />}></Route>
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    );
+
+    // Verify initial content
+    expect(screen.queryByText('Welcome')).toBeNull(); // Ensure 'Welcome' is not on the initial page
+
+    await user.click(screen.getByText('In Cart'));
+
+    expect(await screen.findByText('Your Items:')).toBeInTheDocument();
   });
 });

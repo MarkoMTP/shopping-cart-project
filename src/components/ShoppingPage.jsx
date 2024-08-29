@@ -20,7 +20,13 @@ export default function ShoppingPage({ handleAddToCart, items }) {
             />
           </a>
           <h3>${item.price}</h3>
-          <button onClick={() => handleAddToCart(item)}>Add to Cart</button>
+          <button
+            onClick={() =>
+              handleAddToCart(item.title, item.image, item.price, item.id)
+            }
+          >
+            Add to Cart
+          </button>
         </div>
       ))}
     </div>

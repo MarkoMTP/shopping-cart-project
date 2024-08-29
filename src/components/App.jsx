@@ -5,7 +5,7 @@ import HomePage from './Homepage';
 import ShoppingPage from './ShoppingPage';
 import CartPage from './shoppingCart';
 
-export default function App() {
+export default function App({ handleAddToCart, givenItems }) {
   const [addedToCarts, setAddedToCarts] = useState(0);
   const [activeLink, setActiveLink] = useState('');
   const [cartItems, setCartItems] = useState([]);
@@ -35,14 +35,17 @@ export default function App() {
   function handleLinkClick(linkName) {
     setActiveLink(linkName);
   }
-
-  function handleAddToCart(title, image, price, id) {
+  function internalHandleAddToCart(title, image, price, id) {
     setAddedToCarts((prevCount) => prevCount + 1);
     setCartItems((prevCartItems) => [
       ...prevCartItems,
       { title, image, price, id },
     ]);
   }
+
+  const actualHandleAddToCart = handleAddToCart || internalHandleAddToCart;
+
+  const actualItems = givenItems || items;
 
   let content;
   if (loading) {
@@ -52,7 +55,12 @@ export default function App() {
   } else if (activeLink === 'homepage') {
     content = <HomePage />;
   } else if (activeLink === 'shoppingpage') {
-    content = <ShoppingPage handleAddToCart={handleAddToCart} items={items} />;
+    content = (
+      <ShoppingPage
+        handleAddToCart={actualHandleAddToCart}
+        items={actualItems}
+      />
+    );
   } else if (activeLink === 'cart') {
     content = <CartPage cartItems={cartItems} />;
   }
@@ -73,7 +81,6 @@ export default function App() {
             Shop
           </Link>
           <br />
-          <span>&#37;</span>
           <Link to="cart" onClick={() => handleLinkClick('cart')}>
             In Cart
           </Link>

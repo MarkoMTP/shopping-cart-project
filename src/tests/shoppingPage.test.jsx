@@ -1,8 +1,9 @@
-import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import ShoppingPage from '../components/ShoppingPage'; // Adjust the import path based on your file structure
 import userEvent from '@testing-library/user-event';
+import App from '../components/App';
 
 describe('ShoppingPage', () => {
   const mockHandleAddToCart = vi.fn();
@@ -50,17 +51,36 @@ describe('ShoppingPage', () => {
   });
 
   it('calls handleAddToCart when button is clicked', async () => {
-    renderWithRouter(
-      <ShoppingPage handleAddToCart={mockHandleAddToCart} items={mockItems} />
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <Routes>
+          <Route
+            path="/"
+            element={<App handleAddToCart={mockHandleAddToCart} />}
+          >
+            <Route path="shoppingpage" element={<ShoppingPage />} />
+          </Route>
+        </Routes>
+      </MemoryRouter>
     );
 
+    // Ensure the "Shop" link is in the DOM and click it
+    await user.click(screen.getByText('Shop'));
+
+    // Wait for the loading state to disappear
     await waitFor(() => {
       expect(screen.queryByText(/Loading items.../)).not.toBeInTheDocument();
     });
 
+    // Check if the "Add to Cart" buttons are rendered
     const buttons = await screen.findAllByText('Add to Cart');
+    expect(buttons.length).toBeGreaterThan(0); // Ensure there are buttons rendered
+
+    // Simulate clicking the first button twice
     await user.click(buttons[0]);
     await user.click(buttons[0]);
+
+    // Check if the handler was called twice
     expect(mockHandleAddToCart).toHaveBeenCalledTimes(2);
   });
 });
