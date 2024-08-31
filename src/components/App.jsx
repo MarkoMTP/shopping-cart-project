@@ -9,6 +9,7 @@ export default function App({ handleAddToCart, givenItems }) {
   const [addedToCarts, setAddedToCarts] = useState(0);
   const [activeLink, setActiveLink] = useState('');
   const [cartItems, setCartItems] = useState([]);
+  const [totalPrice, setTotalPrice] = useState(0);
 
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true); // Loading state
@@ -35,12 +36,30 @@ export default function App({ handleAddToCart, givenItems }) {
   function handleLinkClick(linkName) {
     setActiveLink(linkName);
   }
-  function internalHandleAddToCart(title, image, price, id) {
-    setAddedToCarts((prevCount) => prevCount + 1);
-    setCartItems((prevCartItems) => [
-      ...prevCartItems,
-      { title, image, price, id },
-    ]);
+  function internalHandleAddToCart(title, image, price, id, amount = 1) {
+    setCartItems((prevCartItems) => {
+      // Check if the item with the same id already exists in the cart
+      const existingItemIndex = prevCartItems.findIndex(
+        (item) => item.id === id
+      );
+
+      if (existingItemIndex > -1) {
+        // If the item exists, update its amount
+        const updatedCartItems = [...prevCartItems];
+        updatedCartItems[existingItemIndex] = {
+          ...updatedCartItems[existingItemIndex],
+          amount: updatedCartItems[existingItemIndex].amount + 1,
+        };
+        return updatedCartItems;
+      } else {
+        // If the item doesn't exist, add it as a new item
+        return [...prevCartItems, { title, image, price, id, amount }];
+      }
+    });
+    setTotalPrice((prevTotalPrice) => Math.floor(prevTotalPrice + price));
+
+    // Increment the total count of items in the cart
+    setAddedToCarts((prevCount) => prevCount + amount);
   }
 
   const actualHandleAddToCart = handleAddToCart || internalHandleAddToCart;
@@ -62,7 +81,7 @@ export default function App({ handleAddToCart, givenItems }) {
       />
     );
   } else if (activeLink === 'cart') {
-    content = <CartPage cartItems={cartItems} />;
+    content = <CartPage cartItems={cartItems} totalPrice={totalPrice} />;
   }
 
   return (

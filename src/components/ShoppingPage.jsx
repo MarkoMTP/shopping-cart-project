@@ -6,6 +6,8 @@ export default function ShoppingPage({ handleAddToCart, items }) {
     return <div>No items available.</div>;
   }
 
+  const amount = 1;
+
   return (
     <div>
       <h1>Shop</h1>
@@ -22,7 +24,13 @@ export default function ShoppingPage({ handleAddToCart, items }) {
           <h3>${item.price}</h3>
           <button
             onClick={() =>
-              handleAddToCart(item.title, item.image, item.price, item.id)
+              handleAddToCart(
+                item.title,
+                item.image,
+                item.price,
+                item.id,
+                amount
+              )
             }
           >
             Add to Cart

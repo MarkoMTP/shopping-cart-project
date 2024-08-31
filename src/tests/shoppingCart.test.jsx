@@ -46,6 +46,42 @@ describe('Shopping cart', () => {
 
     await user.click(screen.getByText('In Cart'));
 
+    // make sure item is in cart
     expect(await screen.findAllByText('Item 1'));
+
+    //make sure the correct amount of items is in cart
+    expect(await screen.findAllByText('2 of items'));
+
+    //total price
+
+    expect(await screen.findByText('Total: 20'));
+  });
+
+  it('makes sure the add and the delete button on items in shopping cart works', async () => {
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <Routes>
+          <Route path="/" element={<App givenItems={mockItems} />}>
+            <Route path="shoppingpage" element={<ShoppingPage />} />
+            <Route path="cart" element={<CartPage />} />
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    );
+
+    //go to shop choose a product and then go to cart
+    await user.click(screen.getByText('Shop'));
+    expect(await screen.findByText('Item 1')).toBeInTheDocument();
+
+    const buttons = await screen.findAllByText('Add to Cart');
+    await user.click(buttons[0]);
+    await user.click(buttons[0]);
+
+    expect(await screen.findByText('2')).toBeInTheDocument();
+
+    await user.click(screen.getByText('In Cart'));
+
+    const deleteButtons = await screen.findByText('-');
+    const addButtons = await screen.findByText('+');
   });
 });
