@@ -76,12 +76,24 @@ describe('Shopping cart', () => {
     const buttons = await screen.findAllByText('Add to Cart');
     await user.click(buttons[0]);
     await user.click(buttons[0]);
-
-    expect(await screen.findByText('2')).toBeInTheDocument();
+    await user.click(buttons[0]);
 
     await user.click(screen.getByText('In Cart'));
 
-    const deleteButtons = await screen.findByText('-');
-    const addButtons = await screen.findByText('+');
+    const deleteButton = await screen.findByText('-');
+    const addButton = await screen.findByText('+');
+
+    expect(await screen.findByText('3 of items')).toBeInTheDocument();
+
+    //check for plus button
+    await user.click(addButton);
+    await user.click(addButton);
+
+    expect(await screen.findByText('5 of items')).toBeInTheDocument();
+    await user.click(deleteButton);
+    await user.click(deleteButton);
+    await user.click(deleteButton);
+
+    expect(await screen.findByText('2 of items')).toBeInTheDocument();
   });
 });
