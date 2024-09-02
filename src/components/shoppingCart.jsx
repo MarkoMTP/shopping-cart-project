@@ -1,6 +1,6 @@
 import React from 'react';
 
-function CartPage({ cartItems, totalPrice }) {
+function CartPage({ cartItems, totalPrice, handlePlusButton, handleMinusBtn }) {
   return (
     <div>
       <h2>Your Items:</h2>
@@ -10,11 +10,61 @@ function CartPage({ cartItems, totalPrice }) {
       ) : (
         <ul>
           {cartItems.map((item) => (
-            <li key={item.id}>
+            <li
+              key={item.id}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+              }}
+            >
               <h3>{item.title}</h3>
-              <img src={item.image} alt={item.title} />
+              <img
+                src={item.image}
+                alt={item.title}
+                style={{ width: '150px', height: '150px', borderRadius: '8px' }}
+              />
               <p>Price: ${item.price}</p>
-              <h3>{item.amount} of items</h3>
+              <div
+                style={{
+                  display: 'flex',
+                  gap: '5px',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <button
+                  style={{
+                    width: '4rem',
+                    maxHeight: '2rem',
+                    fontSize: '1.5rem',
+                    textAlign: 'center',
+                  }}
+                  onClick={() => handleMinusBtn(item.id)}
+                >
+                  -
+                </button>{' '}
+                <h2>{item.amount} of items</h2>
+                <button
+                  style={{
+                    width: '4rem',
+                    maxHeight: '2rem',
+                    fontSize: '1.5rem',
+                    textAlign: 'center',
+                  }}
+                  onClick={() =>
+                    handlePlusButton(
+                      item.title,
+                      item.image,
+                      item.price,
+                      item.id,
+                      item.amount
+                    )
+                  }
+                >
+                  +
+                </button>
+              </div>
             </li>
           ))}
         </ul>

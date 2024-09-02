@@ -10,7 +10,6 @@ export default function App({ handleAddToCart, givenItems }) {
   const [activeLink, setActiveLink] = useState('');
   const [cartItems, setCartItems] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
-
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true); // Loading state
   const [error, setError] = useState(null); // Error state
@@ -56,10 +55,39 @@ export default function App({ handleAddToCart, givenItems }) {
         return [...prevCartItems, { title, image, price, id, amount }];
       }
     });
+
     setTotalPrice((prevTotalPrice) => Math.floor(prevTotalPrice + price));
 
     // Increment the total count of items in the cart
     setAddedToCarts((prevCount) => prevCount + amount);
+  }
+
+  function handleDeleteItem(id) {
+    setCartItems((prevItems) => {
+      return prevItems
+        .map((item) => {
+          if (item.id === id) {
+            // If the item has more than 1 quantity, decrease the amount
+            if (item.amount > 1) {
+              return { ...item, amount: item.amount - 1 };
+            } else {
+              // If the item only has 1 quantity, we return null to remove it later
+              return null;
+            }
+          }
+          return item;
+        })
+        .filter((item) => item !== null); // Filter out items that were set to null
+    });
+
+    // Update the total price
+    setTotalPrice((prevTotalPrice) => {
+      const item = cartItems.find((item) => item.id === id);
+      return Math.floor(prevTotalPrice - (item ? item.price : 0));
+    });
+
+    // Decrement the total count of items in the cart
+    setAddedToCarts((prevCount) => prevCount - 1);
   }
 
   const actualHandleAddToCart = handleAddToCart || internalHandleAddToCart;
@@ -81,7 +109,14 @@ export default function App({ handleAddToCart, givenItems }) {
       />
     );
   } else if (activeLink === 'cart') {
-    content = <CartPage cartItems={cartItems} totalPrice={totalPrice} />;
+    content = (
+      <CartPage
+        cartItems={cartItems}
+        totalPrice={totalPrice}
+        handlePlusButton={actualHandleAddToCart}
+        handleMinusBtn={handleDeleteItem}
+      />
+    );
   }
 
   return (
@@ -114,7 +149,7 @@ export default function App({ handleAddToCart, givenItems }) {
             : activeLink === 'shoppingpage'
               ? style.shoppingPage
               : activeLink === 'cart'
-                ? style.homePageClass
+                ? style.shoppingPage
                 : style.homePageClass
         }
       >
