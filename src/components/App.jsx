@@ -56,10 +56,13 @@ export default function App({ handleAddToCart, givenItems }) {
       }
     });
 
-    setTotalPrice((prevTotalPrice) => Math.floor(prevTotalPrice + price));
+    setTotalPrice((prevTotalPrice) => {
+      const newTotal = prevTotalPrice + price;
+      return parseFloat(newTotal.toFixed(2)); // Round to 2 decimal places
+    });
 
     // Increment the total count of items in the cart
-    setAddedToCarts((prevCount) => prevCount + amount);
+    setAddedToCarts((prevCount) => prevCount + 1);
   }
 
   function handleDeleteItem(id) {
@@ -80,10 +83,10 @@ export default function App({ handleAddToCart, givenItems }) {
         .filter((item) => item !== null); // Filter out items that were set to null
     });
 
-    // Update the total price
     setTotalPrice((prevTotalPrice) => {
       const item = cartItems.find((item) => item.id === id);
-      return Math.floor(prevTotalPrice - (item ? item.price : 0));
+      const newTotal = prevTotalPrice - (item ? item.price : 0);
+      return parseFloat(Math.max(newTotal, 0).toFixed(2)); // Round to 2 decimal places and ensure non-negative
     });
 
     // Decrement the total count of items in the cart
