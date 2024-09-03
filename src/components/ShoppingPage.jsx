@@ -9,34 +9,41 @@ export default function ShoppingPage({ handleAddToCart, items }) {
   const amount = 1;
 
   return (
-    <div>
+    <>
       <h1>Shop</h1>
-      {items.map((item) => (
-        <div key={item.id} style={{ marginBottom: '20px' }}>
-          <h2>{item.title}</h2>
-          <a href={item.image} target="_blank" rel="noopener noreferrer">
-            <img
-              src={item.image}
-              alt={item.title}
-              style={{ width: '150px', height: '150px', borderRadius: '8px' }}
-            />
-          </a>
-          <h3>${item.price}</h3>
-          <button
-            onClick={() =>
-              handleAddToCart(
-                item.title,
-                item.image,
-                item.price,
-                item.id,
-                amount
-              )
-            }
-          >
-            Add to Cart
-          </button>
-        </div>
-      ))}
-    </div>
+
+      <div className={style.shoppingPageInside}>
+        {items.map((item) => (
+          <div key={item.id} className={style.itemDiv}>
+            <a href={item.image} target="_blank" rel="noopener noreferrer">
+              <img
+                src={item.image}
+                alt={item.title}
+                style={{ width: '150px', height: '150px', borderRadius: '8px' }}
+              />
+            </a>
+
+            <div style={{ fontSize: '0.8rem' }}>
+              <h2>{item.title}</h2>
+              <h3>${item.price}</h3>
+              <button
+                onClick={() =>
+                  handleAddToCart(
+                    item.title,
+                    item.image,
+                    item.price,
+                    item.id,
+                    amount
+                  )
+                }
+                className={style.myButton}
+              >
+                Add to Cart
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </>
   );
 }

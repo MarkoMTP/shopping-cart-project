@@ -15,7 +15,7 @@ export default function App({ handleAddToCart, givenItems }) {
   const [error, setError] = useState(null); // Error state
 
   useEffect(() => {
-    fetch('https://fakestoreapi.com/products?limit=5', { mode: 'cors' })
+    fetch('https://fakestoreapi.com/products?limit=8', { mode: 'cors' })
       .then((response) => {
         if (response.status >= 400) {
           throw new Error('Server error');
@@ -127,18 +127,27 @@ export default function App({ handleAddToCart, givenItems }) {
       <div className={style.navbar}>
         <p>Buy Something</p>
         <ul className={style.links}>
-          <Link to="homepage" onClick={() => handleLinkClick('homepage')}>
-            HomePage
+          <Link
+            to="homepage"
+            onClick={() => handleLinkClick('homepage')}
+            style={{ color: 'black' }}
+          >
+            Home Page
           </Link>
           <br />
           <Link
             to="shoppingpage"
             onClick={() => handleLinkClick('shoppingpage')}
+            style={{ color: 'black' }}
           >
             Shop
           </Link>
           <br />
-          <Link to="cart" onClick={() => handleLinkClick('cart')}>
+          <Link
+            to="cart"
+            onClick={() => handleLinkClick('cart')}
+            style={{ color: 'black' }}
+          >
             In Cart
           </Link>
           {addedToCarts}

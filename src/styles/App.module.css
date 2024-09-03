@@ -1,5 +1,12 @@
+body {
+  background-color: rgb(218, 249, 255);
+}
+
 .navbar {
-  background-color: rgb(187, 251, 239);
+  background-color: rgb(133, 155, 255);
+  border: black 1px solid;
+  color: rgb(0, 0, 0);
+  font-size: 2rem;
   transform: translate(30%, 50%);
   width: 60%;
   border-radius: 25px;
@@ -9,20 +16,11 @@
   align-items: center;
 }
 
-.shoppingPage {
-  background-color: rgb(240, 255, 252);
-  width: 80%;
-  margin: 5rem;
-  border-radius: 25px;
-  padding: 2rem;
-  text-align: center;
-}
-
 .homePageClass {
-  background-color: rgb(240, 255, 252);
+  background-color: rgb(255, 255, 255);
   width: 80%;
-  margin: 5rem;
-
+  margin: 7rem;
+  border: 1px solid black;
   border-radius: 25px;
   padding: 2rem;
   text-align: center;
@@ -31,9 +29,69 @@
 .links {
   display: flex;
   gap: 8px;
-  font-size: 1.3rem;
+  font-size: 1.5rem;
 }
 
 .loading {
   transform: translate(10%, -30%);
+}
+
+.shoppingPage {
+  width: 80%;
+  margin: 8rem;
+  border-radius: 25px;
+  text-align: center;
+  border: 1px solid black;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: rgb(239, 249, 255);
+}
+
+.shoppingPageInside {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem;
+}
+
+.itemDiv {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  border: 1px rgb(0, 0, 0) solid;
+  border-radius: 25px;
+  padding: 8rem;
+}
+
+.myButton {
+  color: rgb(0, 0, 0);
+  font-size: 1rem;
+  line-height: 1rem;
+  padding: 0.8rem;
+  border-radius: 7px;
+  font-family: Georgia, serif;
+  font-weight: normal;
+  text-decoration: none;
+  font-style: normal;
+  font-variant: normal;
+  text-transform: none;
+  background-image: linear-gradient(
+    to right,
+    rgb(255, 255, 255) 0%,
+    rgb(255, 255, 255) 100%
+  );
+  box-shadow: rgba(0, 0, 0, 0) 100px -100px 0px 6px;
+  display: inline-block;
+}
+.myButton:hover {
+  background: rgb(255, 255, 255);
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+.myButton:active {
+  background: rgb(255, 255, 255);
 }
