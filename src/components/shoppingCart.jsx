@@ -1,6 +1,9 @@
-import React from 'react';
+import { useOutletContext } from 'react-router-dom';
 
-function CartPage({ cartItems, totalPrice, handlePlusButton, handleMinusBtn }) {
+function CartPage() {
+  const { cartItems, totalPrice, actualHandleAddToCart, handleDeleteItem } =
+    useOutletContext();
+
   return (
     <div>
       <h2>Your Items:</h2>
@@ -40,7 +43,7 @@ function CartPage({ cartItems, totalPrice, handlePlusButton, handleMinusBtn }) {
                     fontSize: '1.5rem',
                     textAlign: 'center',
                   }}
-                  onClick={() => handleMinusBtn(item.id)}
+                  onClick={() => handleDeleteItem(item.id)}
                 >
                   -
                 </button>{' '}
@@ -53,7 +56,7 @@ function CartPage({ cartItems, totalPrice, handlePlusButton, handleMinusBtn }) {
                     textAlign: 'center',
                   }}
                   onClick={() =>
-                    handlePlusButton(
+                    actualHandleAddToCart(
                       item.title,
                       item.image,
                       item.price,

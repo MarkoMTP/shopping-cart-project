@@ -1,35 +1,35 @@
-import { Link } from 'react-router-dom';
+import { Link, Outlet } from 'react-router-dom';
 import style from '../styles/App.module.css';
 import { useEffect, useState } from 'react';
-import HomePage from './Homepage';
-import ShoppingPage from './ShoppingPage';
-import CartPage from './shoppingCart';
+
+function fetchProducts(setItems, setLoading, setError) {
+  fetch('https://fakestoreapi.com/products?limit=8', { mode: 'cors' })
+    .then((response) => {
+      if (response.status >= 400) {
+        throw new Error('Server error');
+      }
+      return response.json();
+    })
+    .then((data) => {
+      setItems(data);
+      setLoading(false); // Set loading to false when data is fetched
+    })
+    .catch((err) => {
+      setError(err.message);
+      setLoading(false); // Set loading to false if there's an error
+    });
+}
 
 export default function App({ handleAddToCart, givenItems }) {
   const [addedToCarts, setAddedToCarts] = useState(0);
   const [activeLink, setActiveLink] = useState('');
   const [cartItems, setCartItems] = useState([]);
-  const [totalPrice, setTotalPrice] = useState(0);
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true); // Loading state
   const [error, setError] = useState(null); // Error state
 
   useEffect(() => {
-    fetch('https://fakestoreapi.com/products?limit=8', { mode: 'cors' })
-      .then((response) => {
-        if (response.status >= 400) {
-          throw new Error('Server error');
-        }
-        return response.json();
-      })
-      .then((data) => {
-        setItems(data);
-        setLoading(false); // Set loading to false when data is fetched
-      })
-      .catch((err) => {
-        setError(err.message);
-        setLoading(false); // Set loading to false if there's an error
-      });
+    fetchProducts(setItems, setLoading, setError); // Call the separated function here
   }, []);
 
   function handleLinkClick(linkName) {
@@ -56,11 +56,6 @@ export default function App({ handleAddToCart, givenItems }) {
       }
     });
 
-    setTotalPrice((prevTotalPrice) => {
-      const newTotal = prevTotalPrice + price;
-      return parseFloat(newTotal.toFixed(2)); // Round to 2 decimal places
-    });
-
     // Increment the total count of items in the cart
     setAddedToCarts((prevCount) => prevCount + 1);
   }
@@ -70,26 +65,17 @@ export default function App({ handleAddToCart, givenItems }) {
       return prevItems
         .map((item) => {
           if (item.id === id) {
-            // If the item has more than 1 quantity, decrease the amount
             if (item.amount > 1) {
               return { ...item, amount: item.amount - 1 };
             } else {
-              // If the item only has 1 quantity, we return null to remove it later
               return null;
             }
           }
           return item;
         })
-        .filter((item) => item !== null); // Filter out items that were set to null
+        .filter((item) => item !== null);
     });
 
-    setTotalPrice((prevTotalPrice) => {
-      const item = cartItems.find((item) => item.id === id);
-      const newTotal = prevTotalPrice - (item ? item.price : 0);
-      return parseFloat(Math.max(newTotal, 0).toFixed(2)); // Round to 2 decimal places and ensure non-negative
-    });
-
-    // Decrement the total count of items in the cart
     setAddedToCarts((prevCount) => prevCount - 1);
   }
 
@@ -97,30 +83,9 @@ export default function App({ handleAddToCart, givenItems }) {
 
   const actualItems = givenItems || items;
 
-  let content;
-  if (loading) {
-    content = <div>Loading items...</div>; // Show loading message
-  } else if (error) {
-    content = <div>Error: {error}</div>; // Show error message
-  } else if (activeLink === 'homepage') {
-    content = <HomePage />;
-  } else if (activeLink === 'shoppingpage') {
-    content = (
-      <ShoppingPage
-        handleAddToCart={actualHandleAddToCart}
-        items={actualItems}
-      />
-    );
-  } else if (activeLink === 'cart') {
-    content = (
-      <CartPage
-        cartItems={cartItems}
-        totalPrice={totalPrice}
-        handlePlusButton={actualHandleAddToCart}
-        handleMinusBtn={handleDeleteItem}
-      />
-    );
-  }
+  const totalPrice = cartItems
+    .reduce((acc, item) => acc + item.price * item.amount, 0)
+    .toFixed(2);
 
   return (
     <>
@@ -165,7 +130,15 @@ export default function App({ handleAddToCart, givenItems }) {
                 : style.homePageClass
         }
       >
-        {content}
+        <Outlet
+          context={{
+            actualHandleAddToCart,
+            actualItems,
+            cartItems,
+            totalPrice,
+            handleDeleteItem,
+          }}
+        />
       </div>
     </>
   );

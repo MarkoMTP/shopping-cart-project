@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
 import style from '../styles/App.module.css';
+import { useOutletContext } from 'react-router-dom';
 
-export default function ShoppingPage({ handleAddToCart, items }) {
-  if (items.length === 0) {
-    return <div>No items available.</div>;
+export default function ShoppingPage() {
+  const { actualHandleAddToCart, actualItems } = useOutletContext();
+  if (actualItems.length === 0) {
+    return <div>No actualItems available.</div>;
   }
 
   const amount = 1;
@@ -13,7 +14,7 @@ export default function ShoppingPage({ handleAddToCart, items }) {
       <h1>Shop</h1>
 
       <div className={style.shoppingPageInside}>
-        {items.map((item) => (
+        {actualItems.map((item) => (
           <div key={item.id} className={style.itemDiv}>
             <a href={item.image} target="_blank" rel="noopener noreferrer">
               <img
@@ -28,7 +29,7 @@ export default function ShoppingPage({ handleAddToCart, items }) {
               <h3>${item.price}</h3>
               <button
                 onClick={() =>
-                  handleAddToCart(
+                  actualHandleAddToCart(
                     item.title,
                     item.image,
                     item.price,
