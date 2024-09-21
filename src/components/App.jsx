@@ -1,8 +1,10 @@
 import { Link, Outlet } from 'react-router-dom';
 import style from '../styles/App.module.css';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useReducer } from 'react';
+import reducer from './reducer';
 
-function fetchProducts(setItems, setLoading, setError) {
+// Fetch Products Function
+function fetchProducts(dispatch) {
   fetch('https://fakestoreapi.com/products?limit=8', { mode: 'cors' })
     .then((response) => {
       if (response.status >= 400) {
@@ -11,81 +13,64 @@ function fetchProducts(setItems, setLoading, setError) {
       return response.json();
     })
     .then((data) => {
-      setItems(data);
-      setLoading(false); // Set loading to false when data is fetched
+      // Dispatch action to update items in the state
+      dispatch({ type: 'SET_ITEMS', payload: data });
     })
     .catch((err) => {
-      setError(err.message);
-      setLoading(false); // Set loading to false if there's an error
+      console.error(err.message); // Log the error but do not manage it in state
     });
 }
 
 export default function App({ handleAddToCart, givenItems }) {
-  const [addedToCarts, setAddedToCarts] = useState(0);
-  const [activeLink, setActiveLink] = useState('');
-  const [cartItems, setCartItems] = useState([]);
-  const [items, setItems] = useState([]);
-  const [loading, setLoading] = useState(true); // Loading state
-  const [error, setError] = useState(null); // Error state
+  const initialState = {
+    addedToCarts: 0,
+    activeLink: '',
+    cartItems: [],
+    items: [],
+  };
+
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
-    fetchProducts(setItems, setLoading, setError); // Call the separated function here
-  }, []);
+    fetchProducts(dispatch); // Fetch products on mount
+  }, [dispatch]);
 
+  // Handle link click to update active link state
   function handleLinkClick(linkName) {
-    setActiveLink(linkName);
+    dispatch({
+      type: 'SET_ACTIVE_LINK',
+      payload: linkName,
+    });
   }
+
+  // Internal function to handle adding to cart
   function internalHandleAddToCart(title, image, price, id, amount = 1) {
-    setCartItems((prevCartItems) => {
-      // Check if the item with the same id already exists in the cart
-      const existingItemIndex = prevCartItems.findIndex(
-        (item) => item.id === id
-      );
-
-      if (existingItemIndex > -1) {
-        // If the item exists, update its amount
-        const updatedCartItems = [...prevCartItems];
-        updatedCartItems[existingItemIndex] = {
-          ...updatedCartItems[existingItemIndex],
-          amount: updatedCartItems[existingItemIndex].amount + 1,
-        };
-        return updatedCartItems;
-      } else {
-        // If the item doesn't exist, add it as a new item
-        return [...prevCartItems, { title, image, price, id, amount }];
-      }
+    dispatch({
+      type: 'ADD_TO_CART',
+      payload: { title, image, price, id, amount },
     });
-
-    // Increment the total count of items in the cart
-    setAddedToCarts((prevCount) => prevCount + 1);
   }
 
+  // Handle delete item
   function handleDeleteItem(id) {
-    setCartItems((prevItems) => {
-      return prevItems
-        .map((item) => {
-          if (item.id === id) {
-            if (item.amount > 1) {
-              return { ...item, amount: item.amount - 1 };
-            } else {
-              return null;
-            }
-          }
-          return item;
-        })
-        .filter((item) => item !== null);
+    dispatch({
+      type: 'REMOVE_FROM_CART',
+      payload: { id },
     });
-
-    setAddedToCarts((prevCount) => prevCount - 1);
   }
 
+  // Fallback to internal add to cart if handleAddToCart is not provided
   const actualHandleAddToCart = handleAddToCart || internalHandleAddToCart;
 
-  const actualItems = givenItems || items;
+  // Use given items or the fetched items
+  const actualItems = givenItems || state.items;
 
-  const totalPrice = cartItems
-    .reduce((acc, item) => acc + item.price * item.amount, 0)
-    .toFixed(2);
+  // Calculate total price of items in the cart
+  const totalPrice = useMemo(() => {
+    return state.cartItems
+      .reduce((acc, item) => acc + item.price * item.amount, 0)
+      .toFixed(2);
+  }, [state.cartItems]);
 
   return (
     <>
@@ -115,17 +100,17 @@ export default function App({ handleAddToCart, givenItems }) {
           >
             In Cart
           </Link>
-          {addedToCarts}
+          {state.addedToCarts}
         </ul>
       </div>
 
       <div
         className={
-          activeLink === 'homepage'
+          state.activeLink === 'homepage'
             ? style.homePageClass
-            : activeLink === 'shoppingpage'
+            : state.activeLink === 'shoppingpage'
               ? style.shoppingPage
-              : activeLink === 'cart'
+              : state.activeLink === 'cart'
                 ? style.shoppingPage
                 : style.homePageClass
         }
@@ -134,7 +119,7 @@ export default function App({ handleAddToCart, givenItems }) {
           context={{
             actualHandleAddToCart,
             actualItems,
-            cartItems,
+            cartItems: state.cartItems,
             totalPrice,
             handleDeleteItem,
           }}

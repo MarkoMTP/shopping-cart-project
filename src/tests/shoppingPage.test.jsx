@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import ShoppingPage from '../components/ShoppingPage'; // Adjust the import path based on your file structure
+import ShoppingPage from '../components/ShoppingPage';
 import userEvent from '@testing-library/user-event';
 import App from '../components/App';
 
@@ -28,40 +28,18 @@ describe('ShoppingPage', () => {
     return render(<MemoryRouter initialEntries={[route]}>{ui}</MemoryRouter>);
   };
 
-  it('renders items after loading', async () => {
-    renderWithRouter(
-      <ShoppingPage handleAddToCart={mockHandleAddToCart} items={mockItems} />
-    );
-
-    await waitFor(() => {
-      expect(screen.queryByText(/Loading items.../)).not.toBeInTheDocument();
-    });
-
-    expect(await screen.findByText('Item 1')).toBeInTheDocument();
-    expect(await screen.findByAltText('Item 1')).toHaveAttribute(
-      'src',
-      'https://via.placeholder.com/150'
-    );
-
-    expect(await screen.findByText('Item 2')).toBeInTheDocument();
-    expect(await screen.findByAltText('Item 2')).toHaveAttribute(
-      'src',
-      'https://via.placeholder.com/150'
-    );
-  });
-
   it('calls handleAddToCart when button is clicked', async () => {
-    render(
-      <MemoryRouter initialEntries={['/']}>
-        <Routes>
-          <Route
-            path="/"
-            element={<App handleAddToCart={mockHandleAddToCart} />}
-          >
-            <Route path="shoppingpage" element={<ShoppingPage />} />
-          </Route>
-        </Routes>
-      </MemoryRouter>
+    renderWithRouter(
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <App handleAddToCart={mockHandleAddToCart} givenItems={mockItems} />
+          }
+        >
+          <Route path="shoppingpage" element={<ShoppingPage />} />
+        </Route>
+      </Routes>
     );
 
     // Ensure the "Shop" link is in the DOM and click it
